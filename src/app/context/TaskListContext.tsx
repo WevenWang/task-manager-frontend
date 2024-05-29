@@ -1,3 +1,5 @@
+"use client";
+
 import { createContext, useEffect, useState } from "react";
 import { Task } from "../types/task";
 import { getTasks } from "../api/taskApi";
@@ -28,7 +30,6 @@ function TaskListContextProvider({ children }: TaskListContextProviderProps) {
 	const [tasks, setTasks] = useState<Task[]>(initialStates.tasks);
 	const loadTasks = async () => {
 		const response = await getTasks();
-
 		setTasks(response);
 	};
 
