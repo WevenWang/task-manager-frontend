@@ -8,7 +8,7 @@ export type Task = {
 export enum TaskStatusEnum {
 	Todo = "Todo",
 	InProgress = "In Progress",
-	Done = "Done",
+	ReadyForReview = "Ready For Review",
 }
 
 export enum TaskCategoryEnum {

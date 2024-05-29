@@ -1,7 +1,18 @@
 import { Stack, TextField, Typography, Button, Card } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
+import TaskContainer from "./TaskContainer";
+import { TaskStatusEnum } from "../types/task";
+import TaskDetailModal from "./TaskDetailModal";
 
 function Board() {
+	const [openTaskDetailModal, setOpenTaskDetailModal] = useState(false);
+	const handleClickNewTask = () => {
+		setOpenTaskDetailModal(true);
+	};
+
+	const handleClose = () => {
+		setOpenTaskDetailModal(false);
+	};
 	return (
 		<Stack width="80%" margin="auto" sx={{ p: 3 }} spacing={2}>
 			<Stack direction="row" justifyContent="space-between">
@@ -10,9 +21,18 @@ function Board() {
 
 			<Stack direction="row" justifyContent="space-between">
 				<Typography variant="h6">Tasks</Typography>
-				<Button variant="contained" color="primary">
+				<Button
+					variant="contained"
+					color="primary"
+					size="large"
+					onClick={handleClickNewTask}
+				>
 					+ New Task
 				</Button>
+				<TaskDetailModal
+					open={openTaskDetailModal}
+					onClose={handleClose}
+				/>
 			</Stack>
 			<Stack
 				direction="row"
@@ -20,17 +40,9 @@ function Board() {
 				height={"80%"}
 				justifyContent={"space-around"}
 			>
-				<Card sx={{ width: "30%", p: 2, height: "100%" }}>
-					<Typography variant="h6">Todo</Typography>
-				</Card>
-
-				<Card sx={{ width: "30%", p: 2 }}>
-					<Typography variant="h6">In Progress</Typography>
-				</Card>
-
-				<Card sx={{ width: "30%", p: 2 }}>
-					<Typography variant="h6">Ready for Review</Typography>
-				</Card>
+				<TaskContainer status={TaskStatusEnum.Todo} />
+				<TaskContainer status={TaskStatusEnum.InProgress} />
+				<TaskContainer status={TaskStatusEnum.ReadyForReview} />
 			</Stack>
 		</Stack>
 	);
