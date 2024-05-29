@@ -48,7 +48,7 @@ export default function Home() {
 				<Stack direction="row" justifyContent="space-between">
 					<Typography variant="h6">Tasks</Typography>
 					<Button variant="contained" color="primary">
-						Add Task
+						+ New Task
 					</Button>
 				</Stack>
 				<Stack
