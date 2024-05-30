@@ -58,7 +58,6 @@ function Board() {
 	}
 
 	function onDragEnd(event: DragEndEvent) {
-		// setActiveColumn(null);
 		setActiveTask(null);
 
 		const { active, over } = event;
@@ -100,25 +99,6 @@ function Board() {
 		// Im dropping a Task over another Task
 		if (isActiveATask && isOverATask) {
 			console.log("DROPPING TASK OVER TASK", { activeId, overId });
-			// const activeIndex = tasks.findIndex((t) => t._id === activeId);
-			// const overIndex = tasks.findIndex((t) => t._id === overId);
-
-			// tasks[activeIndex].status = tasks[overIndex].status;
-
-			//     // Fix introduced after video recording
-			//     tasks[activeIndex].columnId = tasks[overIndex].columnId;
-			// setTasks((tasks) => {
-			//   const activeIndex = tasks.findIndex((t) => t.id === activeId);
-			//   const overIndex = tasks.findIndex((t) => t.id === overId);
-
-			//   if (tasks[activeIndex].columnId != tasks[overIndex].columnId) {
-			//     // Fix introduced after video recording
-			//     tasks[activeIndex].columnId = tasks[overIndex].columnId;
-			//     return arrayMove(tasks, activeIndex, overIndex - 1);
-			//   }
-
-			//   return arrayMove(tasks, activeIndex, overIndex);
-			// });
 		}
 
 		const isOverAColumn = over.data.current?.type === "TaskContainer";
@@ -153,14 +133,6 @@ function Board() {
 				];
 				setSortOrders([...sortOrders]);
 			}
-
-			// setTasks((tasks) => {
-			// 	const activeIndex = tasks.findIndex((t) => t.id === activeId);
-
-			// 	tasks[activeIndex].columnId = overId;
-			// 	console.log("DROPPING TASK OVER COLUMN", { activeIndex });
-			// 	return arrayMove(tasks, activeIndex, activeIndex) as Task[];
-			// });
 		}
 	}
 
