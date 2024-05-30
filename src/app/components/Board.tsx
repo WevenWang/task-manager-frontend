@@ -27,8 +27,15 @@ function Board() {
 		TaskStatusEnum.ReadyForReview,
 	];
 
-	const { tasks, setTasks, sortOrders, setSortOrders } =
-		useContext(TaskListContext);
+	const {
+		tasks,
+		updateLocalTask,
+		sortOrders,
+		setSortOrders,
+		setTaskIdChanged,
+
+		persistLocalChanges,
+	} = useContext(TaskListContext);
 	const handleClickNewTask = () => {
 		setOpenTaskDetailModal(true);
 	};
@@ -57,29 +64,14 @@ function Board() {
 		}
 	}
 
-	function onDragEnd(event: DragEndEvent) {
+	async function onDragEnd(event: DragEndEvent) {
 		setActiveTask(null);
 
-		const { active, over } = event;
+		const { over } = event;
 		if (!over) return;
+		console.log("DRAG END", sortOrders);
 
-		const activeId = active.id;
-		const overId = over.id;
-
-		if (activeId === overId) return;
-
-		const isActiveAColumn = active.data.current?.type === "Column";
-		if (!isActiveAColumn) return;
-
-		console.log("DRAG END");
-
-		// setColumns((columns) => {
-		//   const activeColumnIndex = columns.findIndex((col) => col.id === activeId);
-
-		//   const overColumnIndex = columns.findIndex((col) => col.id === overId);
-
-		//   return arrayMove(columns, activeColumnIndex, overColumnIndex);
-		// });
+		await persistLocalChanges();
 	}
 
 	async function onDragOver(event: DragOverEvent) {
@@ -108,13 +100,48 @@ function Board() {
 					(order) => order.status === overStatus
 				);
 
+				const oldStatus = activeTask.status;
+
 				if (orderAtStatus) {
-					const activeIndex = orderAtStatus.taskIds.indexOf(
+					let activeIndex = orderAtStatus.taskIds.indexOf(
 						activeId as string
 					);
 					const overIndex = orderAtStatus.taskIds.indexOf(
 						overId as string
 					);
+					if (activeIndex === -1) {
+						// active task is not in the same status as over task
+						// move active task to the status of over task first
+
+						updateLocalTask(activeId as string, {
+							...activeTask,
+							status: overStatus,
+						});
+						setTaskIdChanged(activeId as string);
+						const orderAtOldStatus = sortOrders.find(
+							(order) => order.status === oldStatus
+						);
+						if (orderAtOldStatus) {
+							const updatedTaskIds =
+								orderAtOldStatus.taskIds.filter(
+									(id) => id !== activeId
+								);
+							orderAtOldStatus.taskIds = updatedTaskIds;
+						}
+						const orderAtNewStatus = sortOrders.find(
+							(order) => order.status === overStatus
+						);
+						if (orderAtNewStatus) {
+							orderAtNewStatus.taskIds = [
+								...orderAtNewStatus.taskIds,
+								activeId as string,
+							];
+
+							activeIndex = orderAtNewStatus.taskIds.indexOf(
+								activeId as string
+							);
+						}
+					}
 					if (activeIndex !== -1 && overIndex !== -1) {
 						const newTaskIds = arrayMove(
 							orderAtStatus.taskIds,
@@ -134,15 +161,13 @@ function Board() {
 		if (isActiveATask && isOverAColumn) {
 			const activeIndex = tasks.findIndex((t) => t._id === activeId);
 			const oldStatus = tasks[activeIndex].status;
-			tasks[activeIndex].status = overId as TaskStatusEnum;
+			updateLocalTask(activeId as string, {
+				...tasks[activeIndex],
+				status: overId as TaskStatusEnum,
+			});
+			setTaskIdChanged(activeId as string);
 			console.log("DROPPING TASK OVER COLUMN", { activeIndex });
-			// console.log("tasks", tasks);
-			// const newTasks = arrayMove(
-			// 	tasks,
-			// 	activeIndex,
-			// 	activeIndex
-			// ) as Task[];
-			// setTasks(newTasks);
+
 			const orderAtPrevStatus = sortOrders.find(
 				(order) => order.status === oldStatus
 			);
