@@ -10,6 +10,7 @@ import {
 import React, { useState } from "react";
 import { Task, TaskCategoryEnum } from "../types/task";
 import CloseIcon from "@mui/icons-material/Close";
+import CategoryChip from "./CategoryChip";
 
 function TaskDetailModal({
 	task,
@@ -63,6 +64,7 @@ function CreateTaskForm({ onClose }: { onClose: () => void }) {
 				>
 					Category
 				</Typography>
+				<CategoryChip category={taskCategory} clickable />
 			</Stack>
 
 			<TextField
