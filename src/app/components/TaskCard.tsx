@@ -41,8 +41,12 @@ function TaskCard({ task }: { task: Task }) {
 	const boxShadow = isDragging ? "0 4px 8px 0 rgba(0,0,0,0.2)" : "";
 	const cursor = isDragging ? "grabbing" : "grab";
 
-	const { markTaskAsDone, setOpenTaskDetailModal, setTaskToEdit } =
-		useContext(TaskListContext);
+	const {
+		markTaskAsDone,
+		setOpenTaskDetailModal,
+		setTaskToEdit,
+		removeTask,
+	} = useContext(TaskListContext);
 
 	const handleEditTask = () => {
 		setTaskToEdit(task);
@@ -81,10 +85,22 @@ function TaskCard({ task }: { task: Task }) {
 						</IconButton>
 					)}
 					<Stack flexGrow={1}>
-						<Typography sx={{ mt: 0.5 }}>{task.text}</Typography>
+						<Typography
+							sx={{
+								mt: 0.5,
+								textDecorationLine: task.markAsDone
+									? "line-through"
+									: "none",
+							}}
+						>
+							{task.text}
+						</Typography>
 					</Stack>
 					<Stack direction="column">
-						<IconButton size="small">
+						<IconButton
+							size="small"
+							onClick={() => removeTask(task._id as string)}
+						>
 							<DeleteOutlineIcon />
 						</IconButton>
 
