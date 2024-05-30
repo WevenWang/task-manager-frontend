@@ -7,10 +7,11 @@ import {
 	Typography,
 	useTheme,
 } from "@mui/material";
-import React, { useState } from "react";
-import { Task, TaskCategoryEnum } from "../types/task";
+import React, { useContext, useState } from "react";
+import { Task, TaskCategoryEnum, TaskStatusEnum } from "../types/task";
 import CloseIcon from "@mui/icons-material/Close";
 import CategoryChip from "./CategoryChip";
+import { TaskListContext } from "../context/TaskListContext";
 
 function TaskDetailModal({
 	task,
@@ -34,6 +35,16 @@ function CreateTaskForm({ onClose }: { onClose: () => void }) {
 		TaskCategoryEnum.WebDesign
 	);
 	const theme = useTheme();
+	const { addTask } = useContext(TaskListContext);
+	const handleCreateTask = () => {
+		addTask({
+			text: taskDescription,
+			category: taskCategory,
+			status: TaskStatusEnum.Todo,
+		});
+		onClose();
+	};
+
 	return (
 		<Stack sx={{ p: 2, minWidth: 350 }} spacing={2}>
 			<Stack
@@ -76,7 +87,12 @@ function CreateTaskForm({ onClose }: { onClose: () => void }) {
 				multiline
 				rows={4}
 			/>
-			<Button variant="contained" color="primary" size="large">
+			<Button
+				variant="contained"
+				color="primary"
+				size="large"
+				onClick={handleCreateTask}
+			>
 				Create Task
 			</Button>
 		</Stack>

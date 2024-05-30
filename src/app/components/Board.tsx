@@ -40,9 +40,18 @@ function Board() {
 				height={"80%"}
 				justifyContent={"space-around"}
 			>
-				<TaskContainer status={TaskStatusEnum.Todo} />
-				<TaskContainer status={TaskStatusEnum.InProgress} />
-				<TaskContainer status={TaskStatusEnum.ReadyForReview} />
+				<TaskContainer
+					status={TaskStatusEnum.Todo}
+					sx={{ backgroundColor: "#EAEAEA" }}
+				/>
+				<TaskContainer
+					status={TaskStatusEnum.InProgress}
+					sx={{ backgroundColor: "#FFF6EB" }}
+				/>
+				<TaskContainer
+					status={TaskStatusEnum.ReadyForReview}
+					sx={{ backgroundColor: "#EAF6FF" }}
+				/>
 			</Stack>
 		</Stack>
 	);

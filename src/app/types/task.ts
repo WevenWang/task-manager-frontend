@@ -1,5 +1,5 @@
 export type Task = {
-	_id: string;
+	_id?: string;
 	text: string;
 	category: TaskCategoryEnum;
 	status: TaskStatusEnum;
