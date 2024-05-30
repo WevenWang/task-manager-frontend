@@ -13,7 +13,9 @@ import { AxiosError } from "axios";
 
 type TaskListContextType = {
 	tasks: Task[];
+	setTasks: (tasks: Task[]) => void;
 	sortOrders: SortOrder[];
+	setSortOrders: (sortOrders: SortOrder[]) => void;
 	addTask: (task: Task) => void;
 	removeTask: (taskId: string) => void;
 	updateTask: (taskId: string, updatedTask: Task) => void;
@@ -26,7 +28,9 @@ const initialStates = {
 
 const TaskListContext = createContext<TaskListContextType>({
 	tasks: [],
+	setTasks: () => {},
 	sortOrders: [],
+	setSortOrders: () => {},
 	addTask: () => {},
 	removeTask: () => {},
 	updateTask: () => {},
@@ -51,31 +55,38 @@ function TaskListContextProvider({ children }: TaskListContextProviderProps) {
 		}
 	};
 
-	const updateSortOrderWithTasks = async (
-		status: string,
+	const updateLocalSortOrder = (
+		status: TaskStatusEnum,
 		taskIds: string[]
 	) => {
-		try {
-			const sortOrder = { status, taskIds };
-
-			const updatedSortOrder = await updateSortOrder(status, sortOrder);
-			setSortOrders(
-				sortOrders.map((sortOrder) =>
-					sortOrder.status === status ? updatedSortOrder : sortOrder
-				)
-			);
-		} catch (error) {
-			console.error(error);
-		}
+		const updatedSortOrders = sortOrders.map((sortOrder) =>
+			sortOrder.status === status ? { ...sortOrder, taskIds } : sortOrder
+		);
+		setSortOrders(updatedSortOrders);
 	};
 
 	const loadSortOrders = async () => {
 		try {
 			const response = await getSortOrders();
-			if (response.length === 0) {
-				const sortOrder = { status: TaskStatusEnum.Todo, taskIds: [] };
-				const createdSortOrder = await createSortOrder(sortOrder);
-				setSortOrders([createdSortOrder]);
+			if (response.length < 3) {
+				const toDoSortOrder = {
+					status: TaskStatusEnum.Todo,
+					taskIds: [],
+				};
+				const inProgressSortOrder = {
+					status: TaskStatusEnum.InProgress,
+					taskIds: [],
+				};
+				const readyForReviewSortOrder = {
+					status: TaskStatusEnum.ReadyForReview,
+					taskIds: [],
+				};
+				await createSortOrder(toDoSortOrder);
+				await createSortOrder(inProgressSortOrder);
+				await createSortOrder(readyForReviewSortOrder);
+
+				const sortOrders = await getSortOrders();
+				setSortOrders(sortOrders);
 			}
 			setSortOrders(response);
 		} catch (error) {
@@ -102,17 +113,12 @@ function TaskListContextProvider({ children }: TaskListContextProviderProps) {
 						task._id,
 						...currentTodoSortOrder.taskIds,
 					];
-					await updateSortOrderWithTasks(
-						TaskStatusEnum.Todo,
-						updatedTaskIds
-					);
 
-					const updatedSortOrders = sortOrders.map((sortOrder) =>
-						sortOrder.status === TaskStatusEnum.Todo
-							? { ...sortOrder, taskIds: updatedTaskIds }
-							: sortOrder
-					);
-					setSortOrders(updatedSortOrders);
+					updateLocalSortOrder(TaskStatusEnum.Todo, updatedTaskIds);
+					await updateSortOrder({
+						status: TaskStatusEnum.Todo,
+						taskIds: updatedTaskIds,
+					});
 				}
 			}
 		} catch (error) {
@@ -132,7 +138,15 @@ function TaskListContextProvider({ children }: TaskListContextProviderProps) {
 
 	return (
 		<TaskListContext.Provider
-			value={{ tasks, addTask, removeTask, updateTask, sortOrders }}
+			value={{
+				tasks,
+				addTask,
+				removeTask,
+				updateTask,
+				sortOrders,
+				setTasks,
+				setSortOrders,
+			}}
 		>
 			{children}
 		</TaskListContext.Provider>

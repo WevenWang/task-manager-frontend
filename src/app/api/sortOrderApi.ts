@@ -18,9 +18,11 @@ export const createSortOrder = async (
 };
 
 export const updateSortOrder = async (
-	status: string,
 	sortOrder: SortOrder
 ): Promise<SortOrder> => {
-	const response = await axios.patch(`${API_URL}/${status}`, sortOrder);
+	const response = await axios.patch(
+		`${API_URL}/${sortOrder.status}`,
+		sortOrder
+	);
 	return response.data;
 };

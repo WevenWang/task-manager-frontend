@@ -3,6 +3,8 @@ export type Task = {
 	text: string;
 	category: TaskCategoryEnum;
 	status: TaskStatusEnum;
+	createdAt?: string;
+	updatedAt?: string;
 };
 
 export enum TaskStatusEnum {

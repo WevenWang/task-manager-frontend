@@ -1,11 +1,34 @@
 import { Stack, TextField, Typography, Button, Card } from "@mui/material";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import TaskContainer from "./TaskContainer";
-import { TaskStatusEnum } from "../types/task";
+import { Task, TaskStatusEnum } from "../types/task";
 import TaskDetailModal from "./TaskDetailModal";
+import {
+	DndContext,
+	DragEndEvent,
+	DragOverEvent,
+	DragOverlay,
+	DragStartEvent,
+	PointerSensor,
+	useSensor,
+	useSensors,
+} from "@dnd-kit/core";
+import { createPortal } from "react-dom";
+import TaskCard from "./TaskCard";
+import { arrayMove, SortableContext } from "@dnd-kit/sortable";
+import { TaskListContext } from "../context/TaskListContext";
 
 function Board() {
 	const [openTaskDetailModal, setOpenTaskDetailModal] = useState(false);
+	const [activeTask, setActiveTask] = useState<Task | null>(null);
+	const columns = [
+		TaskStatusEnum.Todo,
+		TaskStatusEnum.InProgress,
+		TaskStatusEnum.ReadyForReview,
+	];
+
+	const { tasks, setTasks, sortOrders, setSortOrders } =
+		useContext(TaskListContext);
 	const handleClickNewTask = () => {
 		setOpenTaskDetailModal(true);
 	};
@@ -13,6 +36,134 @@ function Board() {
 	const handleClose = () => {
 		setOpenTaskDetailModal(false);
 	};
+
+	const sensors = useSensors(
+		useSensor(PointerSensor, {
+			activationConstraint: {
+				distance: 10,
+			},
+		})
+	);
+
+	function onDragStart(event: DragStartEvent) {
+		// if (event.active.data.current?.type === "Column") {
+		//   setActiveColumn(event.active.data.current.column);
+		//   return;
+		// }
+
+		if (event.active.data.current?.type === "Task") {
+			setActiveTask(event.active.data.current.task);
+			return;
+		}
+	}
+
+	function onDragEnd(event: DragEndEvent) {
+		// setActiveColumn(null);
+		setActiveTask(null);
+
+		const { active, over } = event;
+		if (!over) return;
+
+		const activeId = active.id;
+		const overId = over.id;
+
+		if (activeId === overId) return;
+
+		const isActiveAColumn = active.data.current?.type === "Column";
+		if (!isActiveAColumn) return;
+
+		console.log("DRAG END");
+
+		// setColumns((columns) => {
+		//   const activeColumnIndex = columns.findIndex((col) => col.id === activeId);
+
+		//   const overColumnIndex = columns.findIndex((col) => col.id === overId);
+
+		//   return arrayMove(columns, activeColumnIndex, overColumnIndex);
+		// });
+	}
+
+	async function onDragOver(event: DragOverEvent) {
+		const { active, over } = event;
+		if (!over) return;
+
+		const activeId = active.id;
+		const overId = over.id;
+
+		if (activeId === overId) return;
+
+		const isActiveATask = active.data.current?.type === "Task";
+		const isOverATask = over.data.current?.type === "Task";
+
+		if (!isActiveATask) return;
+
+		// Im dropping a Task over another Task
+		if (isActiveATask && isOverATask) {
+			console.log("DROPPING TASK OVER TASK", { activeId, overId });
+			// const activeIndex = tasks.findIndex((t) => t._id === activeId);
+			// const overIndex = tasks.findIndex((t) => t._id === overId);
+
+			// tasks[activeIndex].status = tasks[overIndex].status;
+
+			//     // Fix introduced after video recording
+			//     tasks[activeIndex].columnId = tasks[overIndex].columnId;
+			// setTasks((tasks) => {
+			//   const activeIndex = tasks.findIndex((t) => t.id === activeId);
+			//   const overIndex = tasks.findIndex((t) => t.id === overId);
+
+			//   if (tasks[activeIndex].columnId != tasks[overIndex].columnId) {
+			//     // Fix introduced after video recording
+			//     tasks[activeIndex].columnId = tasks[overIndex].columnId;
+			//     return arrayMove(tasks, activeIndex, overIndex - 1);
+			//   }
+
+			//   return arrayMove(tasks, activeIndex, overIndex);
+			// });
+		}
+
+		const isOverAColumn = over.data.current?.type === "TaskContainer";
+
+		// Im dropping a Task over a column
+		if (isActiveATask && isOverAColumn) {
+			const activeIndex = tasks.findIndex((t) => t._id === activeId);
+			const oldStatus = tasks[activeIndex].status;
+			tasks[activeIndex].status = overId as TaskStatusEnum;
+			console.log("DROPPING TASK OVER COLUMN", { activeIndex });
+			console.log("tasks", tasks);
+			const newTasks = arrayMove(
+				tasks,
+				activeIndex,
+				activeIndex
+			) as Task[];
+			setTasks(newTasks);
+			const orderAtPrevStatus = sortOrders.find(
+				(order) => order.status === oldStatus
+			);
+			const orderAtNewStatus = sortOrders.find(
+				(order) => order.status === overId
+			);
+			if (orderAtPrevStatus && orderAtNewStatus) {
+				const updatedTaskIds = orderAtPrevStatus.taskIds.filter(
+					(id) => id !== activeId
+				);
+				orderAtPrevStatus.taskIds = updatedTaskIds;
+				orderAtNewStatus.taskIds = [
+					...orderAtNewStatus.taskIds,
+					activeId as string,
+				];
+				setSortOrders([...sortOrders]);
+			}
+
+			// setTasks((tasks) => {
+			// 	const activeIndex = tasks.findIndex((t) => t.id === activeId);
+
+			// 	tasks[activeIndex].columnId = overId;
+			// 	console.log("DROPPING TASK OVER COLUMN", { activeIndex });
+			// 	return arrayMove(tasks, activeIndex, activeIndex) as Task[];
+			// });
+		}
+	}
+
 	return (
 		<Stack width="80%" margin="auto" sx={{ p: 3 }} spacing={2}>
 			<Stack direction="row" justifyContent="space-between">
@@ -34,25 +185,37 @@ function Board() {
 					onClose={handleClose}
 				/>
 			</Stack>
-			<Stack
-				direction="row"
-				width={"100%"}
-				height={"80%"}
-				justifyContent={"space-around"}
+			<DndContext
+				sensors={sensors}
+				onDragStart={onDragStart}
+				onDragEnd={onDragEnd}
+				onDragOver={onDragOver}
 			>
-				<TaskContainer
-					status={TaskStatusEnum.Todo}
-					sx={{ backgroundColor: "#EAEAEA" }}
-				/>
-				<TaskContainer
-					status={TaskStatusEnum.InProgress}
-					sx={{ backgroundColor: "#FFF6EB" }}
-				/>
-				<TaskContainer
-					status={TaskStatusEnum.ReadyForReview}
-					sx={{ backgroundColor: "#EAF6FF" }}
-				/>
-			</Stack>
+				{/* <SortableContext items={columns}> */}
+				<Stack
+					direction="row"
+					width={"100%"}
+					height={"80%"}
+					justifyContent={"space-around"}
+				>
+					<TaskContainer
+						status={TaskStatusEnum.Todo}
+						sx={{ backgroundColor: "#EAEAEA" }}
+					/>
+					<TaskContainer
+						status={TaskStatusEnum.InProgress}
+						sx={{ backgroundColor: "#FFF6EB" }}
+					/>
+					<TaskContainer
+						status={TaskStatusEnum.ReadyForReview}
+						sx={{ backgroundColor: "#EAF6FF" }}
+					/>
+				</Stack>
+				{/* </SortableContext> */}
+				<DragOverlay>
+					{activeTask && <TaskCard task={activeTask} />}
+				</DragOverlay>
+			</DndContext>
 		</Stack>
 	);
 }
