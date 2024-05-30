@@ -99,6 +99,33 @@ function Board() {
 		// Im dropping a Task over another Task
 		if (isActiveATask && isOverATask) {
 			console.log("DROPPING TASK OVER TASK", { activeId, overId });
+			const activeTask = tasks.find((t) => t._id === activeId);
+			const overTask = tasks.find((t) => t._id === overId);
+			if (activeTask && overTask) {
+				// place activeTask before overTask in the same status
+				const overStatus = overTask.status;
+				const orderAtStatus = sortOrders.find(
+					(order) => order.status === overStatus
+				);
+
+				if (orderAtStatus) {
+					const activeIndex = orderAtStatus.taskIds.indexOf(
+						activeId as string
+					);
+					const overIndex = orderAtStatus.taskIds.indexOf(
+						overId as string
+					);
+					if (activeIndex !== -1 && overIndex !== -1) {
+						const newTaskIds = arrayMove(
+							orderAtStatus.taskIds,
+							activeIndex,
+							overIndex
+						);
+						orderAtStatus.taskIds = newTaskIds;
+						setSortOrders([...sortOrders]);
+					}
+				}
+			}
 		}
 
 		const isOverAColumn = over.data.current?.type === "TaskContainer";
@@ -109,13 +136,13 @@ function Board() {
 			const oldStatus = tasks[activeIndex].status;
 			tasks[activeIndex].status = overId as TaskStatusEnum;
 			console.log("DROPPING TASK OVER COLUMN", { activeIndex });
-			console.log("tasks", tasks);
-			const newTasks = arrayMove(
-				tasks,
-				activeIndex,
-				activeIndex
-			) as Task[];
-			setTasks(newTasks);
+			// console.log("tasks", tasks);
+			// const newTasks = arrayMove(
+			// 	tasks,
+			// 	activeIndex,
+			// 	activeIndex
+			// ) as Task[];
+			// setTasks(newTasks);
 			const orderAtPrevStatus = sortOrders.find(
 				(order) => order.status === oldStatus
 			);
