@@ -75,7 +75,11 @@ function CreateTaskForm({ onClose }: { onClose: () => void }) {
 				>
 					Category
 				</Typography>
-				<CategoryChip category={taskCategory} clickable />
+				<CategoryChip
+					category={taskCategory}
+					clickable
+					onSelect={setTaskCategory}
+				/>
 			</Stack>
 
 			<TextField

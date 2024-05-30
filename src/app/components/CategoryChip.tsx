@@ -22,10 +22,12 @@ const StyleChip = styled(Chip)(({ theme }) => ({
 }));
 function CategoryChip({
 	category,
+	onSelect,
 	clickable,
 }: {
 	category: TaskCategoryEnum;
 	clickable?: boolean;
+	onSelect?: (category: TaskCategoryEnum) => void;
 }) {
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const [selectedCategory, setSelectedCategory] =
@@ -42,6 +44,7 @@ function CategoryChip({
 		setSelectedCategory(
 			event.currentTarget.textContent as TaskCategoryEnum
 		);
+		onSelect?.(event.currentTarget.textContent as TaskCategoryEnum);
 		setAnchorEl(null);
 	};
 	return (

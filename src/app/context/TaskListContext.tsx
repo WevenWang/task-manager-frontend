@@ -24,6 +24,7 @@ type TaskListContextType = {
 
 	persistLocalChanges: () => void;
 	removeAllTasks: () => void;
+	markTaskAsDone: (taskId: string) => void;
 };
 
 const initialStates = {
@@ -43,6 +44,7 @@ const TaskListContext = createContext<TaskListContextType>({
 
 	persistLocalChanges: () => {},
 	removeAllTasks: () => {},
+	markTaskAsDone: () => {},
 });
 
 export type TaskListContextProviderProps = {
@@ -78,9 +80,7 @@ function TaskListContextProvider({ children }: TaskListContextProviderProps) {
 
 	const loadSortOrders = async () => {
 		try {
-			console.log("loadSortOrders");
 			const response = await getSortOrders();
-			console.log("response", response);
 			if (response.length == 0) {
 				const toDoSortOrder = {
 					status: TaskStatusEnum.Todo,
@@ -116,8 +116,6 @@ function TaskListContextProvider({ children }: TaskListContextProviderProps) {
 		loadTasks();
 		loadSortOrders();
 	}, [sortOrders.length]);
-
-	console.log("sortOrders", sortOrders);
 
 	const addTask = async (task: Task) => {
 		try {
@@ -190,6 +188,35 @@ function TaskListContextProvider({ children }: TaskListContextProviderProps) {
 		}
 	};
 
+	const markTaskAsDone = async (taskId: string) => {
+		try {
+			const taskToUpdate = tasks.find((task) => task._id === taskId);
+			if (taskToUpdate) {
+				const updatedTask = { ...taskToUpdate, markAsDone: true };
+				updateLocalTask(taskId, updatedTask);
+				await updateTask(taskId, updatedTask);
+				// move task to bottom of current status
+				const currentStatusSortOrder = sortOrders.find(
+					(sortOrder) => sortOrder.status === taskToUpdate.status
+				);
+				if (currentStatusSortOrder) {
+					const updatedTaskIds =
+						currentStatusSortOrder.taskIds.filter(
+							(id) => id !== taskId
+						);
+					updatedTaskIds.push(taskId);
+					updateLocalSortOrder(taskToUpdate.status, updatedTaskIds);
+					await updateSortOrder({
+						status: taskToUpdate.status,
+						taskIds: updatedTaskIds,
+					});
+				}
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
 	return (
 		<TaskListContext.Provider
 			value={{
@@ -203,6 +230,7 @@ function TaskListContextProvider({ children }: TaskListContextProviderProps) {
 				setSortOrders,
 				persistLocalChanges,
 				removeAllTasks,
+				markTaskAsDone,
 			}}
 		>
 			{children}

@@ -1,11 +1,14 @@
 import { Card, Icon, IconButton, Stack, Typography } from "@mui/material";
-import React from "react";
+import React, { useContext } from "react";
 import { Task } from "../types/task";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import CategoryChip from "./CategoryChip";
 import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from "@dnd-kit/sortable";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { TaskListContext } from "../context/TaskListContext";
+
 function TaskCard({ task }: { task: Task }) {
 	const {
 		setNodeRef,
@@ -29,6 +32,8 @@ function TaskCard({ task }: { task: Task }) {
 	const opacity = isDragging ? 0.5 : 1;
 	const boxShadow = isDragging ? "0 4px 8px 0 rgba(0,0,0,0.2)" : "";
 	const cursor = isDragging ? "grabbing" : "grab";
+
+	const { markTaskAsDone } = useContext(TaskListContext);
 	return (
 		<Card
 			ref={setNodeRef}
@@ -49,11 +54,22 @@ function TaskCard({ task }: { task: Task }) {
 					justifyContent="space-between"
 					alignItems="flex-start"
 				>
-					<IconButton sx={{ p: 0 }}>
-						<CheckCircleOutlineIcon />
-					</IconButton>
-					<Typography>{task.text}</Typography>
-					<IconButton sx={{ p: 0 }}>
+					{task.markAsDone ? (
+						<IconButton size="small" color="success">
+							<CheckCircleIcon />
+						</IconButton>
+					) : (
+						<IconButton
+							size="small"
+							onClick={() => markTaskAsDone(task._id as string)}
+						>
+							<CheckCircleOutlineIcon />
+						</IconButton>
+					)}
+					<Stack flexGrow={1}>
+						<Typography sx={{ mt: 1 }}>{task.text}</Typography>
+					</Stack>
+					<IconButton size="small">
 						<DeleteOutlineIcon />
 					</IconButton>
 				</Stack>
@@ -69,7 +85,6 @@ function TaskCard({ task }: { task: Task }) {
 }
 
 function dateParser(date: string) {
-	// convert to Feb 23, no year
 	const d = new Date(date);
 	return d.toLocaleDateString("en-US", {
 		month: "short",
