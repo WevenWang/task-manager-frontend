@@ -1,4 +1,11 @@
-import { Card, Icon, IconButton, Stack, Typography } from "@mui/material";
+import {
+	Avatar,
+	Box,
+	Card,
+	IconButton,
+	Stack,
+	Typography,
+} from "@mui/material";
 import React, { useContext, useState } from "react";
 import { Task } from "../types/task";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
@@ -8,7 +15,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from "@dnd-kit/sortable";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { TaskListContext } from "../context/TaskListContext";
-import TaskDetailModal from "./TaskDetailModal";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 
 function TaskCard({ task }: { task: Task }) {
 	const {
@@ -37,7 +44,7 @@ function TaskCard({ task }: { task: Task }) {
 	const { markTaskAsDone, setOpenTaskDetailModal, setTaskToEdit } =
 		useContext(TaskListContext);
 
-	const handleClickTask = () => {
+	const handleEditTask = () => {
 		setTaskToEdit(task);
 		setOpenTaskDetailModal(true);
 	};
@@ -54,7 +61,6 @@ function TaskCard({ task }: { task: Task }) {
 			}}
 			{...attributes}
 			{...listeners}
-			onClick={() => handleClickTask()}
 		>
 			<Stack spacing={1}>
 				<Stack
@@ -75,16 +81,36 @@ function TaskCard({ task }: { task: Task }) {
 						</IconButton>
 					)}
 					<Stack flexGrow={1}>
-						<Typography sx={{ mt: 1 }}>{task.text}</Typography>
+						<Typography sx={{ mt: 0.5 }}>{task.text}</Typography>
 					</Stack>
-					<IconButton size="small">
-						<DeleteOutlineIcon />
-					</IconButton>
+					<Stack direction="column">
+						<IconButton size="small">
+							<DeleteOutlineIcon />
+						</IconButton>
+
+						<IconButton
+							size="small"
+							onClick={() => handleEditTask()}
+						>
+							<EditOutlinedIcon />
+						</IconButton>
+					</Stack>
 				</Stack>
-				<Stack direction="row" justifyContent="space-between">
+				<Stack
+					direction="row"
+					sx={{ px: 0.5 }}
+					alignItems={"center"}
+					spacing={1}
+				>
+					<Avatar
+						alt="Spatial Labs Logo"
+						src="Spatial Labs Logo.jpeg"
+						sx={{ width: 30, height: 30 }}
+					/>
 					<Typography variant="body2">
 						{dateParser(task.createdAt ?? "")}
 					</Typography>
+					<Box flexGrow={1} />
 					<CategoryChip category={task.category} />
 				</Stack>
 			</Stack>

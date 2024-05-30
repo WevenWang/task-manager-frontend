@@ -2,7 +2,13 @@
 
 import { createContext, useEffect, useState } from "react";
 import { Task, TaskStatusEnum } from "../types/task";
-import { createTask, deleteTasks, getTasks, updateTask } from "../api/taskApi";
+import {
+	createTask,
+	deleteTask,
+	deleteTasks,
+	getTasks,
+	updateTask,
+} from "../api/taskApi";
 import {
 	createSortOrder,
 	deleteSortOrders,
@@ -154,8 +160,31 @@ function TaskListContextProvider({ children }: TaskListContextProviderProps) {
 		}
 	};
 
-	const removeTask = (taskId: string) => {
-		setTasks(tasks.filter((task) => task._id !== taskId));
+	const removeTask = async (taskId: string) => {
+		try {
+			const taskToDelete = tasks.find((task) => task._id === taskId);
+			if (taskToDelete) {
+				await deleteTask(taskId);
+				const currentStatusSortOrder = sortOrders.find(
+					(sortOrder) => sortOrder.status === taskToDelete.status
+				);
+				if (currentStatusSortOrder) {
+					const updatedTaskIds =
+						currentStatusSortOrder.taskIds.filter(
+							(id) => id !== taskId
+						);
+					updateLocalSortOrder(taskToDelete.status, updatedTaskIds);
+					await updateSortOrder({
+						status: taskToDelete.status,
+						taskIds: updatedTaskIds,
+					});
+				}
+			}
+		} catch (error) {
+			console.error(error);
+		} finally {
+			setTasks(tasks.filter((task) => task._id !== taskId));
+		}
 	};
 
 	const removeAllTasks = async () => {
