@@ -3,6 +3,7 @@ export type Task = {
 	text: string;
 	category: TaskCategoryEnum;
 	status: TaskStatusEnum;
+	markAsDone?: boolean;
 	createdAt?: string;
 	updatedAt?: string;
 };

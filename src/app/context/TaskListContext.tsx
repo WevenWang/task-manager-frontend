@@ -2,9 +2,10 @@
 
 import { createContext, useEffect, useState } from "react";
 import { Task, TaskStatusEnum } from "../types/task";
-import { createTask, getTasks, updateTask } from "../api/taskApi";
+import { createTask, deleteTasks, getTasks, updateTask } from "../api/taskApi";
 import {
 	createSortOrder,
+	deleteSortOrders,
 	getSortOrders,
 	updateSortOrder,
 } from "../api/sortOrderApi";
@@ -22,6 +23,7 @@ type TaskListContextType = {
 	updateLocalTask: (taskId: string, updatedTask: Task) => void;
 
 	persistLocalChanges: () => void;
+	removeAllTasks: () => void;
 };
 
 const initialStates = {
@@ -40,6 +42,7 @@ const TaskListContext = createContext<TaskListContextType>({
 	updateLocalTask: () => {},
 
 	persistLocalChanges: () => {},
+	removeAllTasks: () => {},
 });
 
 export type TaskListContextProviderProps = {
@@ -75,8 +78,10 @@ function TaskListContextProvider({ children }: TaskListContextProviderProps) {
 
 	const loadSortOrders = async () => {
 		try {
+			console.log("loadSortOrders");
 			const response = await getSortOrders();
-			if (response.length < 3) {
+			console.log("response", response);
+			if (response.length == 0) {
 				const toDoSortOrder = {
 					status: TaskStatusEnum.Todo,
 					taskIds: [],
@@ -93,10 +98,15 @@ function TaskListContextProvider({ children }: TaskListContextProviderProps) {
 				await createSortOrder(inProgressSortOrder);
 				await createSortOrder(readyForReviewSortOrder);
 
-				const sortOrders = await getSortOrders();
+				const sortOrders = [
+					toDoSortOrder,
+					inProgressSortOrder,
+					readyForReviewSortOrder,
+				];
 				setSortOrders(sortOrders);
+			} else {
+				setSortOrders(response);
 			}
-			setSortOrders(response);
 		} catch (error) {
 			console.error(error);
 		}
@@ -105,7 +115,9 @@ function TaskListContextProvider({ children }: TaskListContextProviderProps) {
 	useEffect(() => {
 		loadTasks();
 		loadSortOrders();
-	}, []);
+	}, [sortOrders.length]);
+
+	console.log("sortOrders", sortOrders);
 
 	const addTask = async (task: Task) => {
 		try {
@@ -136,6 +148,18 @@ function TaskListContextProvider({ children }: TaskListContextProviderProps) {
 
 	const removeTask = (taskId: string) => {
 		setTasks(tasks.filter((task) => task._id !== taskId));
+	};
+
+	const removeAllTasks = async () => {
+		try {
+			await deleteTasks();
+			await deleteSortOrders();
+		} catch (error) {
+			console.error(error);
+		}
+
+		setTasks([]);
+		setSortOrders([]);
 	};
 
 	const updateLocalTask = (taskId: string, updatedTask: Task) => {
@@ -178,6 +202,7 @@ function TaskListContextProvider({ children }: TaskListContextProviderProps) {
 				setTasks,
 				setSortOrders,
 				persistLocalChanges,
+				removeAllTasks,
 			}}
 		>
 			{children}

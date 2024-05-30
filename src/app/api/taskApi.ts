@@ -23,3 +23,7 @@ export const updateTask = async (id: string, task: Task): Promise<Task> => {
 export const deleteTask = async (id: string): Promise<void> => {
 	await axios.delete(`${API_URL}/${id}`);
 };
+
+export const deleteTasks = async (): Promise<void> => {
+	await axios.delete(API_URL);
+};

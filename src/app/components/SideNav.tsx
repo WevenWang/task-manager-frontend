@@ -1,7 +1,9 @@
 import { Stack, Typography, Box, Button } from "@mui/material";
-import React from "react";
+import React, { useContext } from "react";
+import { TaskListContext } from "../context/TaskListContext";
 
 function SideNav() {
+	const { removeAllTasks } = useContext(TaskListContext);
 	return (
 		<Stack
 			width="20%"
@@ -14,7 +16,11 @@ function SideNav() {
 		>
 			<Typography variant="h6">Task Manager</Typography>
 			<Box flexGrow={1} />
-			<Button variant="contained" color="primary">
+			<Button
+				variant="contained"
+				color="primary"
+				onClick={removeAllTasks}
+			>
 				Delete All Tasks
 			</Button>
 		</Stack>

@@ -26,3 +26,7 @@ export const updateSortOrder = async (
 	);
 	return response.data;
 };
+
+export const deleteSortOrders = async (): Promise<void> => {
+	await axios.delete(API_URL);
+};
