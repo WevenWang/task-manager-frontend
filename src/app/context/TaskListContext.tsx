@@ -11,6 +11,7 @@ import {
 } from "../api/sortOrderApi";
 import { SortOrder } from "../types/sortOrder";
 import { AxiosError } from "axios";
+import TaskDetailModal from "../components/TaskDetailModal";
 
 type TaskListContextType = {
 	tasks: Task[];
@@ -21,10 +22,12 @@ type TaskListContextType = {
 	addTask: (task: Task) => void;
 	removeTask: (taskId: string) => void;
 	updateLocalTask: (taskId: string, updatedTask: Task) => void;
-
+	updateAndSaveTask: (taskId: string, updatedTask: Task) => void;
 	persistLocalChanges: () => void;
 	removeAllTasks: () => void;
 	markTaskAsDone: (taskId: string) => void;
+	setOpenTaskDetailModal: (open: boolean) => void;
+	setTaskToEdit: (task: Task | undefined) => void;
 };
 
 const initialStates = {
@@ -41,10 +44,12 @@ const TaskListContext = createContext<TaskListContextType>({
 	addTask: () => {},
 	removeTask: () => {},
 	updateLocalTask: () => {},
-
+	updateAndSaveTask: () => {},
 	persistLocalChanges: () => {},
 	removeAllTasks: () => {},
 	markTaskAsDone: () => {},
+	setOpenTaskDetailModal: () => {},
+	setTaskToEdit: () => {},
 });
 
 export type TaskListContextProviderProps = {
@@ -53,11 +58,16 @@ export type TaskListContextProviderProps = {
 
 function TaskListContextProvider({ children }: TaskListContextProviderProps) {
 	const [taskIdChanged, setTaskIdChanged] = useState<String | null>(null);
-
+	const [openTaskDetailModal, setOpenTaskDetailModal] = useState(false);
+	const [taskToEdit, setTaskToEdit] = useState<Task | undefined>(undefined);
 	const [tasks, setTasks] = useState<Task[]>(initialStates.tasks);
 	const [sortOrders, setSortOrders] = useState<SortOrder[]>(
 		initialStates.sortOrders
 	);
+
+	const handleClose = () => {
+		setOpenTaskDetailModal(false);
+	};
 
 	const loadTasks = async () => {
 		try {
@@ -164,6 +174,20 @@ function TaskListContextProvider({ children }: TaskListContextProviderProps) {
 		setTasks(
 			tasks.map((task) => (task._id === taskId ? updatedTask : task))
 		);
+		setTaskIdChanged(taskId);
+	};
+
+	const updateAndSaveTask = async (taskId: string, updatedTask: Task) => {
+		try {
+			await updateTask(taskId, updatedTask);
+		} catch (error) {
+			console.error(error);
+		} finally {
+			setTaskIdChanged(null);
+			setTasks(
+				tasks.map((task) => (task._id === taskId ? updatedTask : task))
+			);
+		}
 	};
 
 	const persistLocalChanges = async () => {
@@ -225,15 +249,23 @@ function TaskListContextProvider({ children }: TaskListContextProviderProps) {
 				addTask,
 				removeTask,
 				updateLocalTask,
+				updateAndSaveTask,
 				sortOrders,
 				setTasks,
 				setSortOrders,
 				persistLocalChanges,
 				removeAllTasks,
 				markTaskAsDone,
+				setOpenTaskDetailModal,
+				setTaskToEdit,
 			}}
 		>
 			{children}
+			<TaskDetailModal
+				open={openTaskDetailModal}
+				onClose={handleClose}
+				task={taskToEdit}
+			/>
 		</TaskListContext.Provider>
 	);
 }

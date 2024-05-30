@@ -1,5 +1,5 @@
 import { Card, Icon, IconButton, Stack, Typography } from "@mui/material";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Task } from "../types/task";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
@@ -8,6 +8,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from "@dnd-kit/sortable";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { TaskListContext } from "../context/TaskListContext";
+import TaskDetailModal from "./TaskDetailModal";
 
 function TaskCard({ task }: { task: Task }) {
 	const {
@@ -33,7 +34,13 @@ function TaskCard({ task }: { task: Task }) {
 	const boxShadow = isDragging ? "0 4px 8px 0 rgba(0,0,0,0.2)" : "";
 	const cursor = isDragging ? "grabbing" : "grab";
 
-	const { markTaskAsDone } = useContext(TaskListContext);
+	const { markTaskAsDone, setOpenTaskDetailModal, setTaskToEdit } =
+		useContext(TaskListContext);
+
+	const handleClickTask = () => {
+		setTaskToEdit(task);
+		setOpenTaskDetailModal(true);
+	};
 	return (
 		<Card
 			ref={setNodeRef}
@@ -47,6 +54,7 @@ function TaskCard({ task }: { task: Task }) {
 			}}
 			{...attributes}
 			{...listeners}
+			onClick={() => handleClickTask()}
 		>
 			<Stack spacing={1}>
 				<Stack

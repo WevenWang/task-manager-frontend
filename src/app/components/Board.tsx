@@ -19,13 +19,7 @@ import { arrayMove, SortableContext } from "@dnd-kit/sortable";
 import { TaskListContext } from "../context/TaskListContext";
 
 function Board() {
-	const [openTaskDetailModal, setOpenTaskDetailModal] = useState(false);
 	const [activeTask, setActiveTask] = useState<Task | null>(null);
-	const columns = [
-		TaskStatusEnum.Todo,
-		TaskStatusEnum.InProgress,
-		TaskStatusEnum.ReadyForReview,
-	];
 
 	const {
 		tasks,
@@ -33,15 +27,11 @@ function Board() {
 		sortOrders,
 		setSortOrders,
 		setTaskIdChanged,
-
+		setOpenTaskDetailModal,
 		persistLocalChanges,
 	} = useContext(TaskListContext);
 	const handleClickNewTask = () => {
 		setOpenTaskDetailModal(true);
-	};
-
-	const handleClose = () => {
-		setOpenTaskDetailModal(false);
 	};
 
 	const sensors = useSensors(
@@ -117,7 +107,7 @@ function Board() {
 							...activeTask,
 							status: overStatus,
 						});
-						setTaskIdChanged(activeId as string);
+
 						const orderAtOldStatus = sortOrders.find(
 							(order) => order.status === oldStatus
 						);
@@ -165,7 +155,7 @@ function Board() {
 				...tasks[activeIndex],
 				status: overId as TaskStatusEnum,
 			});
-			setTaskIdChanged(activeId as string);
+
 			console.log("DROPPING TASK OVER COLUMN", { activeIndex });
 
 			const orderAtPrevStatus = sortOrders.find(
@@ -204,10 +194,6 @@ function Board() {
 				>
 					+ New Task
 				</Button>
-				<TaskDetailModal
-					open={openTaskDetailModal}
-					onClose={handleClose}
-				/>
 			</Stack>
 			<DndContext
 				sensors={sensors}
@@ -215,7 +201,6 @@ function Board() {
 				onDragEnd={onDragEnd}
 				onDragOver={onDragOver}
 			>
-				{/* <SortableContext items={columns}> */}
 				<Stack
 					direction="row"
 					width={"100%"}
@@ -235,7 +220,7 @@ function Board() {
 						sx={{ backgroundColor: "#EAF6FF" }}
 					/>
 				</Stack>
-				{/* </SortableContext> */}
+
 				<DragOverlay>
 					{activeTask && <TaskCard task={activeTask} />}
 				</DragOverlay>

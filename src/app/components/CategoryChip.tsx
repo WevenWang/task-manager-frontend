@@ -52,7 +52,7 @@ function CategoryChip({
 			<StyleChip
 				label={
 					<Stack direction="row" alignItems="center">
-						{selectedCategory}
+						{clickable ? selectedCategory : category}
 						{clickable && <ExpandMoreIcon />}
 					</Stack>
 				}

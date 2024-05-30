@@ -26,14 +26,7 @@ function TaskContainer({
 		tasks.find((task) => task._id === id)
 	);
 
-	const {
-		setNodeRef,
-
-		// listeners,
-		// transform,
-		// transition,
-		// isDragging,
-	} = useSortable({
+	const { setNodeRef } = useSortable({
 		id: status,
 		data: {
 			type: "TaskContainer",
@@ -45,7 +38,6 @@ function TaskContainer({
 		<Card
 			sx={{ width: "30%", p: 2, height: "100%", ...sx }}
 			ref={setNodeRef}
-			// {...listeners}
 		>
 			<Typography variant="subtitle1">{status}</Typography>
 			{sortedTasks.map((task) => (

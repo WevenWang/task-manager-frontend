@@ -24,18 +24,26 @@ function TaskDetailModal({
 }) {
 	return (
 		<Dialog open={open} onClose={onClose} sx={{ p: 2 }}>
-			{task ? <EditTaskForm /> : <CreateTaskForm onClose={onClose} />}
+			<CreateEditTaskForm onClose={onClose} taskToEdit={task} />
 		</Dialog>
 	);
 }
 
-function CreateTaskForm({ onClose }: { onClose: () => void }) {
-	const [taskDescription, setTaskDescription] = useState("");
+function CreateEditTaskForm({
+	onClose,
+	taskToEdit,
+}: {
+	onClose: () => void;
+	taskToEdit?: Task;
+}) {
+	const [taskDescription, setTaskDescription] = useState(
+		taskToEdit?.text || ""
+	);
 	const [taskCategory, setTaskCategory] = useState(
-		TaskCategoryEnum.WebDesign
+		taskToEdit?.category || TaskCategoryEnum.WebDesign
 	);
 	const theme = useTheme();
-	const { addTask } = useContext(TaskListContext);
+	const { addTask, updateAndSaveTask } = useContext(TaskListContext);
 	const handleCreateTask = () => {
 		addTask({
 			text: taskDescription,
@@ -43,6 +51,18 @@ function CreateTaskForm({ onClose }: { onClose: () => void }) {
 			status: TaskStatusEnum.Todo,
 		});
 		onClose();
+	};
+
+	const handleUpdateTask = async () => {
+		if (taskToEdit) {
+			updateAndSaveTask(taskToEdit._id as string, {
+				...taskToEdit,
+				text: taskDescription,
+				category: taskCategory,
+			});
+
+			onClose();
+		}
 	};
 
 	return (
@@ -55,7 +75,9 @@ function CreateTaskForm({ onClose }: { onClose: () => void }) {
 					alignItems: "center",
 				}}
 			>
-				<Typography variant="subtitle1">Create New Task</Typography>
+				<Typography variant="subtitle1">
+					{taskToEdit ? "Edit Task" : "Create Task"}
+				</Typography>
 				<IconButton onClick={onClose}>
 					<CloseIcon />
 				</IconButton>
@@ -95,16 +117,12 @@ function CreateTaskForm({ onClose }: { onClose: () => void }) {
 				variant="contained"
 				color="primary"
 				size="large"
-				onClick={handleCreateTask}
+				onClick={taskToEdit ? handleUpdateTask : handleCreateTask}
 			>
-				Create Task
+				{taskToEdit ? "Update Task" : "Create Task"}
 			</Button>
 		</Stack>
 	);
-}
-
-function EditTaskForm() {
-	return <div></div>;
 }
 
 export default TaskDetailModal;
