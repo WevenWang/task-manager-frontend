@@ -44,7 +44,7 @@ function TaskContainer({
 	});
 
 	const mdUp = useResponsive("up", "md");
-	const backgroundColor = sx?.backgroundColor ?? "background.default";
+	const backgroundColor = (sx as any).backgroundColor ?? "background.default";
 	const theme = useTheme();
 	return (
 		<Card
