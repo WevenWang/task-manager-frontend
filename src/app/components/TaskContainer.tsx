@@ -53,6 +53,7 @@ function TaskContainer({
 				p: 2,
 				pt: 0,
 				minWidth: 250,
+				minHeight: "100%",
 				height: "100%",
 
 				overflow: "auto",

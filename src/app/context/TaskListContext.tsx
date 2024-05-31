@@ -227,6 +227,7 @@ function TaskListContextProvider({ children }: TaskListContextProviderProps) {
 			setTasks(
 				tasks.map((task) => (task._id === taskId ? updatedTask : task))
 			);
+			setTaskToEdit(undefined);
 		}
 	};
 

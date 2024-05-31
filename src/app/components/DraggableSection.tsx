@@ -7,7 +7,7 @@ import useResponsive from "../hooks/useResponsive";
 function DraggableSection() {
 	const mdup = useResponsive("up", "md");
 	return (
-		<Grid container spacing={1}>
+		<Grid container spacing={1} sx={{ height: "100%" }}>
 			<Grid item xs={12} md={6} lg={4}>
 				<TaskContainer
 					status={TaskStatusEnum.Todo}
