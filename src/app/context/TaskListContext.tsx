@@ -148,6 +148,7 @@ function TaskListContextProvider({ children }: TaskListContextProviderProps) {
 			const response = await createTask(task);
 			if (response) {
 				task._id = response._id;
+				task.createdAt = response.createdAt;
 				setTasks([...tasks, task]);
 				const currentTodoSortOrder = sortOrders.find(
 					(sortOrder) => sortOrder.status === TaskStatusEnum.Todo

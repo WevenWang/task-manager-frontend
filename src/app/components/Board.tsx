@@ -1,4 +1,4 @@
-import { Stack, Typography, Button } from "@mui/material";
+import { Stack, Typography, Button, Divider } from "@mui/material";
 import React, { useContext, useState } from "react";
 import TaskContainer from "./TaskContainer";
 import { Task, TaskStatusEnum } from "../types/task";
@@ -175,8 +175,9 @@ function Board() {
 	}
 
 	return (
-		<Stack width="80%" margin="auto" sx={{ p: 3 }} spacing={2}>
+		<Stack width="80%" margin="auto" sx={{ p: 3 }} spacing={4}>
 			<TasksSearchBar />
+			<Divider sx={{ mx: -3 }} />
 			<Stack direction="row" justifyContent="space-between">
 				<Typography variant="h5">Tasks</Typography>
 				<Button
@@ -198,7 +199,7 @@ function Board() {
 					direction="row"
 					width={"100%"}
 					height={"80%"}
-					justifyContent={"space-around"}
+					justifyContent={"space-between"}
 				>
 					<TaskContainer
 						status={TaskStatusEnum.Todo}

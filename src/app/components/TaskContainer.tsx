@@ -36,7 +36,14 @@ function TaskContainer({
 
 	return (
 		<Card
-			sx={{ width: "30%", p: 2, height: "100%", minWidth: 300, ...sx }}
+			sx={{
+				width: "30%",
+				p: 2,
+				height: "100%",
+				minWidth: 300,
+				overflow: "auto",
+				...sx,
+			}}
 			ref={setNodeRef}
 		>
 			<Typography variant="subtitle1">{status}</Typography>

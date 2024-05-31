@@ -9,7 +9,7 @@ export type Task = {
 };
 
 export enum TaskStatusEnum {
-	Todo = "Todo",
+	Todo = "To do",
 	InProgress = "In Progress",
 	ReadyForReview = "Ready For Review",
 }

@@ -91,6 +91,12 @@ function TaskCard({ task }: { task: Task }) {
 								textDecorationLine: task.markAsDone
 									? "line-through"
 									: "none",
+
+								overflow: "hidden",
+								textOverflow: "ellipsis",
+								display: "-webkit-box",
+								WebkitLineClamp: "3",
+								WebkitBoxOrient: "vertical",
 							}}
 						>
 							{task.text}

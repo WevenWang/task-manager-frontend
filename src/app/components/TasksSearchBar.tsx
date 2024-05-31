@@ -27,9 +27,10 @@ function TasksSearchBar() {
 					),
 				}}
 			/>
-			<Avatar sx={{ width: 40, height: 40 }} src="Spatial Labs Logo.jpeg">
-				🔍
-			</Avatar>
+			<Avatar
+				sx={{ width: 50, height: 50 }}
+				src="Spatial Labs Logo.jpeg"
+			/>
 		</Stack>
 	);
 }
