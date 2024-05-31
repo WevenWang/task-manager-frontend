@@ -17,6 +17,7 @@ import { createPortal } from "react-dom";
 import TaskCard from "./TaskCard";
 import { arrayMove, SortableContext } from "@dnd-kit/sortable";
 import { TaskListContext } from "../context/TaskListContext";
+import TasksSearchBar from "./TasksSearchBar";
 
 function Board() {
 	const [activeTask, setActiveTask] = useState<Task | null>(null);
@@ -180,10 +181,7 @@ function Board() {
 
 	return (
 		<Stack width="80%" margin="auto" sx={{ p: 3 }} spacing={2}>
-			<Stack direction="row" justifyContent="space-between">
-				<TextField label="Filter Task" variant="outlined" />
-			</Stack>
-
+			<TasksSearchBar />
 			<Stack direction="row" justifyContent="space-between">
 				<Typography variant="h6">Tasks</Typography>
 				<Button

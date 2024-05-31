@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useMemo, useState } from "react";
 import { Task, TaskStatusEnum } from "../types/task";
 import {
 	createTask,
@@ -18,6 +18,7 @@ import {
 import { SortOrder } from "../types/sortOrder";
 import { AxiosError } from "axios";
 import TaskDetailModal from "../components/TaskDetailModal";
+import { filterTasksOnSearchString } from "../utils/taskSearch";
 
 type TaskListContextType = {
 	tasks: Task[];
@@ -34,6 +35,8 @@ type TaskListContextType = {
 	markTaskAsDone: (taskId: string) => void;
 	setOpenTaskDetailModal: (open: boolean) => void;
 	setTaskToEdit: (task: Task | undefined) => void;
+	searchString: string;
+	setSearchString: (searchString: string) => void;
 };
 
 const initialStates = {
@@ -56,6 +59,8 @@ const TaskListContext = createContext<TaskListContextType>({
 	markTaskAsDone: () => {},
 	setOpenTaskDetailModal: () => {},
 	setTaskToEdit: () => {},
+	searchString: "",
+	setSearchString: () => {},
 });
 
 export type TaskListContextProviderProps = {
@@ -69,6 +74,11 @@ function TaskListContextProvider({ children }: TaskListContextProviderProps) {
 	const [tasks, setTasks] = useState<Task[]>(initialStates.tasks);
 	const [sortOrders, setSortOrders] = useState<SortOrder[]>(
 		initialStates.sortOrders
+	);
+	const [searchString, setSearchString] = useState<string>("");
+	const filteredTasks = useMemo(
+		() => filterTasksOnSearchString(tasks, searchString),
+		[tasks, searchString]
 	);
 
 	const handleClose = () => {
@@ -273,7 +283,7 @@ function TaskListContextProvider({ children }: TaskListContextProviderProps) {
 	return (
 		<TaskListContext.Provider
 			value={{
-				tasks,
+				tasks: filteredTasks,
 				setTaskIdChanged,
 				addTask,
 				removeTask,
@@ -287,6 +297,8 @@ function TaskListContextProvider({ children }: TaskListContextProviderProps) {
 				markTaskAsDone,
 				setOpenTaskDetailModal,
 				setTaskToEdit,
+				searchString,
+				setSearchString,
 			}}
 		>
 			{children}
