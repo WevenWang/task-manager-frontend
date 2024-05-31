@@ -22,7 +22,7 @@ function SideNav() {
 					Tasks
 				</MenuItem>
 			</Stack>
-			<Box flexGrow={0.9} />
+			<Box flexGrow={1} />
 			<Button
 				variant="outlined"
 				color="error"

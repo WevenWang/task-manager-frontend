@@ -49,11 +49,12 @@ function TaskContainer({
 	return (
 		<Card
 			sx={{
-				width: mdUp ? "30%" : "100%",
+				width: "100%",
 				p: 2,
 				pt: 0,
-				minWidth: 200,
+				minWidth: 250,
 				height: "100%",
+
 				overflow: "auto",
 				...sx,
 			}}

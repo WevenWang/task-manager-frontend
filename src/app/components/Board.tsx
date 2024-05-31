@@ -21,6 +21,7 @@ import { TaskListContext } from "../context/TaskListContext";
 import TasksSearchBar from "./TasksSearchBar";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import useResponsive from "../hooks/useResponsive";
+import DraggableSection from "./DraggableSection";
 
 function Board() {
 	const [activeTask, setActiveTask] = useState<Task | null>(null);
@@ -217,26 +218,7 @@ function Board() {
 				onDragEnd={onDragEnd}
 				onDragOver={onDragOver}
 			>
-				<Stack
-					direction={mdup ? "row" : "column"}
-					width={"100%"}
-					height={"80%"}
-					justifyContent={mdup ? "space-between" : "flex-start"}
-					spacing={4}
-				>
-					<TaskContainer
-						status={TaskStatusEnum.Todo}
-						sx={{ backgroundColor: "#EAEAEA" }}
-					/>
-					<TaskContainer
-						status={TaskStatusEnum.InProgress}
-						sx={{ backgroundColor: "#FFF6EB" }}
-					/>
-					<TaskContainer
-						status={TaskStatusEnum.ReadyForReview}
-						sx={{ backgroundColor: "#EAF6FF" }}
-					/>
-				</Stack>
+				<DraggableSection />
 
 				<DragOverlay>
 					{activeTask && <TaskCard task={activeTask} />}
