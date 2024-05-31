@@ -1,5 +1,7 @@
 # Task Manager Application Frontend
 
+## Description
+
 This is the frontend for the Task Manager application. It is built using [React](https://reactjs.org/), [Next.js](https://nextjs.org/), [Material UI](https://material-ui.com/) and [Dnd-kit](https://dndkit.com/). It is a simple application that allows users to create, update, delete, and view tasks. The application is built using a microservices architecture, with the frontend and backend services running in separate containers. The frontend service communicates with the backend service using RESTful APIs.
 
 ## Getting Started
