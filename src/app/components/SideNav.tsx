@@ -1,12 +1,13 @@
-import { Stack, Typography, Box, Button } from "@mui/material";
+import { Stack, Typography, Box, Button, MenuItem } from "@mui/material";
 import React, { useContext } from "react";
 import { TaskListContext } from "../context/TaskListContext";
+import ListIcon from "@mui/icons-material/List";
 
 function SideNav() {
 	const { removeAllTasks } = useContext(TaskListContext);
 	return (
 		<Stack
-			width="20%"
+			width="15%"
 			margin="auto"
 			sx={{
 				borderRight: "1px solid lightgrey",
@@ -14,13 +15,15 @@ function SideNav() {
 				minWidth: "200px",
 			}}
 		>
-			<Typography variant="h6">Task Manager</Typography>
+			<Stack spacing={10}>
+				<Typography variant="h6">Task Manager</Typography>
+				<MenuItem selected>
+					<ListIcon />
+					Tasks
+				</MenuItem>
+			</Stack>
 			<Box flexGrow={1} />
-			<Button
-				variant="contained"
-				color="primary"
-				onClick={removeAllTasks}
-			>
+			<Button variant="outlined" color="error" onClick={removeAllTasks}>
 				Delete All Tasks
 			</Button>
 		</Stack>

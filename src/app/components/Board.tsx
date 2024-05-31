@@ -10,6 +10,7 @@ import {
 	DragOverlay,
 	DragStartEvent,
 	PointerSensor,
+	TouchSensor,
 	useSensor,
 	useSensors,
 } from "@dnd-kit/core";
@@ -19,6 +20,7 @@ import { arrayMove } from "@dnd-kit/sortable";
 import { TaskListContext } from "../context/TaskListContext";
 import TasksSearchBar from "./TasksSearchBar";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
+import useResponsive from "../hooks/useResponsive";
 
 function Board() {
 	const [activeTask, setActiveTask] = useState<Task | null>(null);
@@ -174,8 +176,15 @@ function Board() {
 		}
 	}
 
+	const mdup = useResponsive("up", "md");
+
 	return (
-		<Stack width="80%" margin="auto" sx={{ p: 3 }} spacing={4}>
+		<Stack
+			width={mdup ? "80%" : "100%"}
+			margin="auto"
+			sx={{ p: 3 }}
+			spacing={4}
+		>
 			<TasksSearchBar />
 			<Divider sx={{ mx: -3 }} />
 			<Stack direction="row" justifyContent="space-between">
@@ -196,10 +205,11 @@ function Board() {
 				onDragOver={onDragOver}
 			>
 				<Stack
-					direction="row"
+					direction={mdup ? "row" : "column"}
 					width={"100%"}
 					height={"80%"}
-					justifyContent={"space-between"}
+					justifyContent={mdup ? "space-between" : "flex-start"}
+					spacing={4}
 				>
 					<TaskContainer
 						status={TaskStatusEnum.Todo}

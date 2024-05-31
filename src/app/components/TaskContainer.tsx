@@ -1,4 +1,12 @@
-import { Card, SxProps, Typography } from "@mui/material";
+import {
+	Box,
+	Card,
+	CardContent,
+	CardHeader,
+	SxProps,
+	Typography,
+	useTheme,
+} from "@mui/material";
 import React, { useContext } from "react";
 import { TaskStatusEnum } from "../types/task";
 import { TaskListContext } from "../context/TaskListContext";
@@ -6,6 +14,7 @@ import { SortOrder } from "../types/sortOrder";
 import TaskCard from "./TaskCard";
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import useResponsive from "../hooks/useResponsive";
 
 function TaskContainer({
 	status,
@@ -34,11 +43,15 @@ function TaskContainer({
 		},
 	});
 
+	const mdUp = useResponsive("up", "md");
+	const backgroundColor = sx?.backgroundColor ?? "background.default";
+	const theme = useTheme();
 	return (
 		<Card
 			sx={{
-				width: "30%",
+				width: mdUp ? "30%" : "100%",
 				p: 2,
+				pt: 0,
 				height: "100%",
 				minWidth: 300,
 				overflow: "auto",
@@ -46,7 +59,16 @@ function TaskContainer({
 			}}
 			ref={setNodeRef}
 		>
-			<Typography variant="subtitle1">{status}</Typography>
+			<CardHeader
+				title={status}
+				sx={{
+					position: "sticky",
+					top: 0,
+					backgroundColor: backgroundColor,
+					zIndex: 1,
+				}}
+			/>
+
 			{sortedTasks.map((task) => (
 				<SortableContext items={sortOrder.taskIds} key={task?._id}>
 					{task && <TaskCard task={task} />}

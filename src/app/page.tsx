@@ -15,8 +15,10 @@ import {
 import { TaskListContextProvider } from "./context/TaskListContext";
 import Board from "./components/Board";
 import SideNav from "./components/SideNav";
+import useResponsive from "./hooks/useResponsive";
 
 export default function Home() {
+	const mdUp = useResponsive("up", "md");
 	return (
 		<TaskListContextProvider>
 			<Stack
@@ -29,7 +31,7 @@ export default function Home() {
 				direction="row"
 				spacing={2}
 			>
-				<SideNav />
+				{mdUp && <SideNav />}
 
 				<Board />
 			</Stack>

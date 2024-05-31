@@ -84,7 +84,7 @@ function TaskCard({ task }: { task: Task }) {
 							<CheckCircleOutlineIcon />
 						</IconButton>
 					)}
-					<Stack flexGrow={1}>
+					<Stack flexGrow={1} sx={{ ml: 1 }}>
 						<Typography
 							sx={{
 								mt: 0.5,
