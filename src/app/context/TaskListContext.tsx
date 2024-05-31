@@ -120,9 +120,11 @@ function TaskListContextProvider({ children }: TaskListContextProviderProps) {
 					status: TaskStatusEnum.ReadyForReview,
 					taskIds: [],
 				};
-				await createSortOrder(toDoSortOrder);
-				await createSortOrder(inProgressSortOrder);
-				await createSortOrder(readyForReviewSortOrder);
+				await Promise.all([
+					createSortOrder(toDoSortOrder),
+					createSortOrder(inProgressSortOrder),
+					createSortOrder(readyForReviewSortOrder),
+				]);
 
 				const sortOrders = [
 					toDoSortOrder,
