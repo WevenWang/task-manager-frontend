@@ -26,7 +26,7 @@ https://github.com/WevenWang/task-manager-frontend/assets/35350620/94745de8-a7b6
     npm install
     ```
 
-2. Create a `.env.local` file in the root of the project and add the following environment variables:
+2. The `.env.local` file has been checked in for easy setup. Normally, it would exist in a .env.xxx or on the server. It contains the following environment variables:
 
     ```bash
     NEXT_PUBLIC_BACKEND_SERVICE_BASE_URI=http://localhost:5001/api
