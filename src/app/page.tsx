@@ -24,7 +24,7 @@ export default function Home() {
 			<Stack
 				sx={{
 					width: "100%",
-					minHeight: "100vh",
+					maxHeight: "100vh",
 
 					bgcolor: "background.default",
 				}}

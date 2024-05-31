@@ -52,8 +52,8 @@ function TaskContainer({
 				width: mdUp ? "30%" : "100%",
 				p: 2,
 				pt: 0,
+				minWidth: 200,
 				height: "100%",
-				minWidth: 300,
 				overflow: "auto",
 				...sx,
 			}}

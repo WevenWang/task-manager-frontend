@@ -12,7 +12,7 @@ function SideNav() {
 			sx={{
 				borderRight: "1px solid lightgrey",
 				p: 3,
-				minWidth: "200px",
+				minWidth: "175px",
 			}}
 		>
 			<Stack spacing={10}>
@@ -22,8 +22,13 @@ function SideNav() {
 					Tasks
 				</MenuItem>
 			</Stack>
-			<Box flexGrow={1} />
-			<Button variant="outlined" color="error" onClick={removeAllTasks}>
+			<Box flexGrow={0.9} />
+			<Button
+				variant="outlined"
+				color="error"
+				onClick={removeAllTasks}
+				size="large"
+			>
 				Delete All Tasks
 			</Button>
 		</Stack>

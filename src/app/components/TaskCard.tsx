@@ -38,7 +38,7 @@ function TaskCard({ task }: { task: Task }) {
 		transition,
 	};
 	const opacity = isDragging ? 0.5 : 1;
-	const boxShadow = isDragging ? "0 4px 8px 0 rgba(0,0,0,0.2)" : "";
+	const boxShadow = isDragging ? "0 4px 8px 0 rgba(0,0,0,0.2)" : 0;
 	const cursor = isDragging ? "grabbing" : "grab";
 
 	const {

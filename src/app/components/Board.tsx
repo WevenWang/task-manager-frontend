@@ -32,6 +32,7 @@ function Board() {
 		setSortOrders,
 		setOpenTaskDetailModal,
 		persistLocalChanges,
+		removeAllTasks,
 	} = useContext(TaskListContext);
 	const handleClickNewTask = () => {
 		setOpenTaskDetailModal(true);
@@ -189,14 +190,26 @@ function Board() {
 			<Divider sx={{ mx: -3 }} />
 			<Stack direction="row" justifyContent="space-between">
 				<Typography variant="h5">Tasks</Typography>
-				<Button
-					variant="contained"
-					color="primary"
-					size="large"
-					onClick={handleClickNewTask}
-				>
-					<Typography>New Task</Typography> <AddOutlinedIcon />
-				</Button>
+				<Stack spacing={2}>
+					<Button
+						variant="contained"
+						color="primary"
+						size={mdup ? "large" : "small"}
+						onClick={handleClickNewTask}
+					>
+						<Typography>New Task</Typography> <AddOutlinedIcon />
+					</Button>
+					{!mdup && (
+						<Button
+							variant="outlined"
+							color="error"
+							onClick={removeAllTasks}
+							size="small"
+						>
+							Delete All Tasks
+						</Button>
+					)}
+				</Stack>
 			</Stack>
 			<DndContext
 				sensors={sensors}
