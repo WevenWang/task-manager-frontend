@@ -12,10 +12,8 @@ function filterTasksOnSearchString(
 		const categoryMatch = task.category
 			.toLowerCase()
 			.includes(searchString.toLowerCase());
-		const statusMatch = task.status
-			.toLowerCase()
-			.includes(searchString.toLowerCase());
-		return textMatch || categoryMatch || statusMatch;
+
+		return textMatch || categoryMatch;
 	});
 }
 

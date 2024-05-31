@@ -119,7 +119,7 @@ function CreateEditTaskForm({
 				size="large"
 				onClick={taskToEdit ? handleUpdateTask : handleCreateTask}
 			>
-				{taskToEdit ? "Update Task" : "Create Task"}
+				{taskToEdit ? "Save Task" : "Create Task"}
 			</Button>
 		</Stack>
 	);

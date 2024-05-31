@@ -1,8 +1,8 @@
-import { Stack, TextField, Typography, Button, Card } from "@mui/material";
+import { Stack, Typography, Button } from "@mui/material";
 import React, { useContext, useState } from "react";
 import TaskContainer from "./TaskContainer";
 import { Task, TaskStatusEnum } from "../types/task";
-import TaskDetailModal from "./TaskDetailModal";
+
 import {
 	DndContext,
 	DragEndEvent,
@@ -13,11 +13,12 @@ import {
 	useSensor,
 	useSensors,
 } from "@dnd-kit/core";
-import { createPortal } from "react-dom";
+
 import TaskCard from "./TaskCard";
-import { arrayMove, SortableContext } from "@dnd-kit/sortable";
+import { arrayMove } from "@dnd-kit/sortable";
 import { TaskListContext } from "../context/TaskListContext";
 import TasksSearchBar from "./TasksSearchBar";
+import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 
 function Board() {
 	const [activeTask, setActiveTask] = useState<Task | null>(null);
@@ -27,7 +28,6 @@ function Board() {
 		updateLocalTask,
 		sortOrders,
 		setSortOrders,
-		setTaskIdChanged,
 		setOpenTaskDetailModal,
 		persistLocalChanges,
 	} = useContext(TaskListContext);
@@ -44,11 +44,6 @@ function Board() {
 	);
 
 	function onDragStart(event: DragStartEvent) {
-		// if (event.active.data.current?.type === "Column") {
-		//   setActiveColumn(event.active.data.current.column);
-		//   return;
-		// }
-
 		if (event.active.data.current?.type === "Task") {
 			setActiveTask(event.active.data.current.task);
 			return;
@@ -183,14 +178,14 @@ function Board() {
 		<Stack width="80%" margin="auto" sx={{ p: 3 }} spacing={2}>
 			<TasksSearchBar />
 			<Stack direction="row" justifyContent="space-between">
-				<Typography variant="h6">Tasks</Typography>
+				<Typography variant="h5">Tasks</Typography>
 				<Button
 					variant="contained"
 					color="primary"
 					size="large"
 					onClick={handleClickNewTask}
 				>
-					+ New Task
+					<Typography>New Task</Typography> <AddOutlinedIcon />
 				</Button>
 			</Stack>
 			<DndContext
